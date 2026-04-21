@@ -1,11 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { blogs } from "../Data/blog";
 
 const Home = () => {
   return (
     <>
+      {/* STYLES */}
       <style>{`
-
         .errors-bg span {
           position: absolute;
           bottom: -20px;
@@ -24,7 +25,7 @@ const Home = () => {
           overflow: hidden;
           border-right: 2px solid red;
           white-space: nowrap;
-          width: 0;
+          display: inline-block;
           animation: typing 4s steps(30,end) forwards, blink 0.7s infinite;
         }
 
@@ -37,7 +38,6 @@ const Home = () => {
           50% { border-color: transparent }
         }
 
-        /* GLITCH */
         .glitch {
           position: relative;
         }
@@ -65,25 +65,31 @@ const Home = () => {
         @keyframes glitch {
           100% { transform: translateY(4px); }
         }
-
       `}</style>
 
-      {/* MAIN WRAPPER (NO CURSOR LOGIC) */}
-      <div className="bg-[#050505] text-white min-h-screen overflow-x-hidden">
+      <div className="bg-[#050505] text-white min-h-screen overflow-x-hidden relative">
 
-        {/* Background */}
+        {/* BACKGROUND FLOATING ERRORS */}
         <div className="fixed inset-0 pointer-events-none z-0">
-          <div className="errors-bg">
-            <span style={{ left: "10%", animationDuration: "6s" }}>ERROR</span>
-            <span style={{ left: "30%", animationDuration: "8s" }}>ACCESS DENIED</span>
-            <span style={{ left: "50%", animationDuration: "7s" }}>SYSTEM FAIL</span>
-            <span style={{ left: "70%", animationDuration: "5s" }}>MALWARE</span>
-            <span style={{ left: "90%", animationDuration: "9s" }}>ROOT</span>
+          <div className="errors-bg relative w-full h-full">
+            {["ERROR", "ACCESS DENIED", "SYSTEM FAIL", "MALWARE", "ROOT"].map(
+              (text, i) => (
+                <span
+                  key={i}
+                  style={{
+                    left: `${10 + i * 20}%`,
+                    animationDuration: `${5 + i}s`,
+                  }}
+                >
+                  {text}
+                </span>
+              )
+            )}
           </div>
         </div>
 
-        {/* Navbar */}
-        <div className="relative z-10 sticky top-0 flex justify-between px-12 py-5 bg-black/80 backdrop-blur">
+        {/* NAVBAR */}
+        <div className="sticky top-0 z-20 flex justify-between px-12 py-5 bg-black/80 backdrop-blur">
           <h1 className="text-red-500 text-2xl font-bold">🐞 NUSK LAB</h1>
 
           <div className="space-x-8 text-gray-400">
@@ -92,9 +98,9 @@ const Home = () => {
           </div>
         </div>
 
-        {/* Hero */}
+        {/* HERO */}
         <div className="text-center py-24 relative z-10">
-          <h1 className="text-red-500 text-4xl font-bold typing inline-block">
+          <h1 className="text-red-500 text-4xl font-bold typing">
             Accessing Cyber Intelligence...
           </h1>
           <p className="text-gray-500 mt-3">
@@ -102,55 +108,42 @@ const Home = () => {
           </p>
         </div>
 
-        {/* BLOG */}
+        {/* BLOGS */}
         <div className="max-w-3xl mx-auto px-4 relative z-10">
-
-          {/* CARD 1 */}
-          <div className="glitch bg-[#0d0d0d] rounded-xl mb-8 overflow-hidden hover:scale-[1.02] transition duration-300">
-
-            <img
-              src="https://images.unsplash.com/photo-1518770660439-4636190af475"
-              className="w-full h-[260px] object-cover"
-              alt=""
-            />
-
-            <div className="p-5">
-              <h3 className="text-red-500">Zero-Day Exploit</h3>
-              <p className="text-gray-400">System compromised silently.</p>
-
-              <button
-                onClick={() => alert("Opening Zero-Day")}
-                className="px-4 py-2 bg-red-500 text-black shadow-[0_0_10px_red] hover:bg-black hover:text-red-500 hover:shadow-[0_0_20px_red] transition duration-300 border border-red-500"
+          {blogs.length === 0 ? (
+            <p className="text-gray-500 text-center">No blogs found 💤</p>
+          ) : (
+            blogs.map((blog) => (
+              <div
+                key={blog.id}
+                className="glitch bg-[#0d0d0d] rounded-xl mb-8 overflow-hidden"
               >
-                Read More
-              </button>
-            </div>
-          </div>
+                <img
+                  src={blog.image}
+                  className="w-full h-[260px] object-cover"
+                  alt={blog.title}
+                />
 
-          {/* CARD 2 */}
-          <div className="glitch bg-[#0d0d0d] rounded-xl mb-8 overflow-hidden hover:scale-[1.02] transition duration-300">
+                <div className="p-5">
+                  <h3 className="text-red-500 font-semibold text-lg">
+                    {blog.title}
+                  </h3>
 
-            <img
-              src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b"
-              className="w-full h-[260px] object-cover"
-              alt=""
-            />
+                  <p className="text-gray-400">
+                    {blog.content?.slice(0, 100)}...
+                  </p>
 
-            <div className="p-5">
-              <h3 className="text-red-500">Ransomware Attack</h3>
-              <p className="text-gray-400">Enterprise systems locked globally.</p>
-
-              <button
-                onClick={() => alert("Opening Ransomware")}
-                className="px-4 py-2 bg-red-500 text-black shadow-[0_0_10px_red] hover:bg-black hover:text-red-500 hover:shadow-[0_0_20px_red] transition duration-300 border border-red-500"
-              >
-                Read More
-              </button>
-            </div>
-          </div>
-
+                  <Link to={`/post/${blog.id}`}>
+                    <button className="mt-3 px-4 py-2 bg-red-500 text-black border border-red-500 hover:bg-black hover:text-red-500 hover:shadow-[0_0_25px_red] transition-all duration-300 hover:scale-105">
+                      Read More
+                    </button>
+                  </Link>
+                </div>
+              </div>
+            ))
+          )}
         </div>
-
+        
         {/* FOOTER */}
         <div className="text-center text-gray-500 py-6 border-t border-red-900 relative z-10">
           ⚠ SYSTEM MONITORED | CYBER-X SECURITY
